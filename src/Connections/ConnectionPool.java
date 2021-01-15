@@ -12,7 +12,7 @@ public class ConnectionPool {
     public static final String JDBC_DRIVER="com.mysql.jdbc.Driver";
     public static final String DB_URL= "jdbc:mysql://127.0.0.1:3306/mydb?useSSL=false&serverTimezone=UTC";
     public static final String user ="root";
-    public static final String password="Roje@1995";
+    public static final String password="kata1998";//Roje@1995";
     private static Set<Connection> pool = new LinkedHashSet<Connection>();
     private static Set<Connection> poolSave = new LinkedHashSet<Connection>();
     public static final int poolSize=8;
@@ -35,7 +35,7 @@ public class ConnectionPool {
             for (int i = 0; i < poolSize; i++) {
                 try {
                     Class.forName(JDBC_DRIVER);
-                    Connection temp=DriverManager.getConnection(DB_URL , user ,password);
+                    Connection temp = DriverManager.getConnection(DB_URL , user ,password);
 
                     pool.add(temp);
                     poolSave.add(temp);

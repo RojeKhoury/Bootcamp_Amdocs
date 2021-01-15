@@ -12,8 +12,6 @@ public class Main
 {
     public static void main(String [] args)
     {
-
-
         ArrayList<String> cars = new ArrayList<String>();
         Company c;
         Date time1=new Date(2000,Calendar.JANUARY, 11, 19,12);
