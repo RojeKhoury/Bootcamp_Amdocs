@@ -2,7 +2,9 @@ package Facade;
 
 import DAO.CompaniesDAO;
 import DAO.CustomersDAO;
-import Test.CouponsDAO;
+import DAO.CouponsDAO;
+
+import java.sql.SQLException;
 
 public abstract class ClientFacade
 {

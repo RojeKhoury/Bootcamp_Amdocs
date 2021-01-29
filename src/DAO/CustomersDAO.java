@@ -1,6 +1,8 @@
 package DAO;
 
 
+import CustomException.ConnectionException;
+import CustomException.NoClientFound;
 import couponSys.Customer;
 
 import java.sql.SQLException;
@@ -8,16 +10,20 @@ import java.util.ArrayList;
 
 public interface CustomersDAO
 {
-    boolean isCustomerExists(String i_email, String password) throws InterruptedException, SQLException;
+    public boolean isCustomerExists(String i_email, String password) throws ConnectionException, SQLException;
 
-    void addCustomer(Customer company) throws SQLException, InterruptedException;
+    public int getCustomerIdByCredentials (String email, String password) throws ConnectionException, SQLException;
 
-    void updateCustomer(Customer company) throws SQLException, InterruptedException;
+    public int getCustomerIdByEmail (String email) throws ConnectionException, SQLException;
 
-    void deleteCustomer(int companyID) throws InterruptedException, SQLException;
+    public void addCustomer(Customer company) throws ConnectionException, SQLException;
 
-    ArrayList<Customer> getAllCustomer() throws SQLException, InterruptedException;
+    public void updateCustomer(Customer company) throws ConnectionException, SQLException;
 
-    Customer getOneCustomer(int companyId) throws SQLException, InterruptedException;
+    public void deleteCustomer(int companyID) throws ConnectionException, SQLException;
+
+    public ArrayList<Customer> getAllCustomer() throws SQLException, ConnectionException;
+
+    public Customer getOneCustomer(int customerId) throws SQLException, ConnectionException;
 
 }

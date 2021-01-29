@@ -66,16 +66,21 @@ public class Customer {
         this.m_password = i_password;
         this.m_coupons = i_coupons;
     }
+    public Customer(int i_id, String i_firstName, String i_lastName, String i_email, String i_password) {
+        this.m_id = i_id;
+        this.m_firstName = i_firstName;
+        this.m_lastName = i_lastName;
+        this.m_email = i_email;
+        this.m_password = i_password;
+    }
 
     @Override
     public String toString() {
-        return "Customer{" +
-                "id=" + m_id +
-                ", firstName='" + m_firstName + '\'' +
-                ", lastName='" + m_lastName + '\'' +
-                ", email='" + m_email + '\'' +
-                ", password='" + m_password + '\'' +
-                ", coupons=" + m_coupons +
-                '}';
+        return "\nCustomer id :" + m_id +
+                "\n\t-firstName= " + m_firstName +
+                "\n\t-lastName= " + m_lastName +
+                "\n\t-email= " + m_email +
+                "\n\t-password= " + m_password +
+                "\n\t-coupons= " + m_coupons +"\n" ;
     }
 }

@@ -1,5 +1,7 @@
 package DAO;
 
+import CustomException.ConnectionException;
+import CustomException.NoClientFound;
 import couponSys.Company;
 
 import java.sql.SQLException;
@@ -7,17 +9,20 @@ import java.util.ArrayList;
 
 public interface CompaniesDAO {
 
-    boolean isCompanyExists(String i_email, String password) throws InterruptedException, SQLException;
+    public boolean isCompanyExists(String i_email, String password) throws SQLException, ConnectionException;
 
-    void addCompany(Company company) throws SQLException, InterruptedException;
+    public boolean isCompanyExistsValidate(String email) throws ConnectionException, SQLException;
 
-    void updateCompany(Company company) throws SQLException, InterruptedException;
+    public int getCompanyIdByCredentials (String email, String password) throws ConnectionException, SQLException;
 
-    void deleteCompany(int companyID) throws InterruptedException, SQLException;
+    public void addCompany(Company company) throws ConnectionException, SQLException;
 
-    ArrayList<Company> getAllCompany() throws SQLException, InterruptedException;
+    public void updateCompany(Company company) throws ConnectionException, SQLException;
 
-    Company getOneCompany(int companyId) throws SQLException, InterruptedException;
+    public void deleteCompany(int companyID) throws SQLException, ConnectionException;
 
+    public ArrayList<Company> getAllCompany() throws ConnectionException, SQLException;
+
+    public Company getOneCompany(int companyId) throws ConnectionException, SQLException;
 
 }

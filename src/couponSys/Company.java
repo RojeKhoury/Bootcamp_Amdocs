@@ -7,16 +7,27 @@ public class Company {
     private String m_name;
     private String m_email;
     private String m_password;
+
     private ArrayList<Coupon> m_coupons;
 
-    public Company(int i_id, String i_name, String i_email, String i_password, ArrayList<Coupon> i_coupons) {
+    public Company(int i_id, String i_name, String i_email, String i_password, ArrayList<Coupon> i_coupons)
+
+    {
         this.m_id = i_id;
         this.m_name = i_name;
         this.m_email = i_email;
         this.m_password = i_password;
         this.m_coupons = i_coupons;
     }
-
+    public Company(int i_id, String i_name, String i_email, String i_password) {
+        this.m_id = i_id;
+        this.m_name = i_name;
+        this.m_email = i_email;
+        this.m_password = i_password;
+    }
+    public ArrayList<Coupon> getCoupons() {
+        return m_coupons;
+    }
     public int getId() {
         return m_id;
     }
@@ -51,12 +62,10 @@ public class Company {
 
     @Override
     public String toString() {
-        return "Company{" +
-                "id=" + m_id +
-                ", name='" + m_name + '\'' +
-                ", email='" + m_email + '\'' +
-                ", password='" + m_password + '\'' +
-                ", coupons=" + m_coupons +
-                '}';
+        return "\nCompany id : " + m_id +
+                "\n\tname= " + m_name +
+                "\n\temail= " + m_email  +
+                "\n\tpassword =" + m_password +
+                "\n\tcoupons = " + m_coupons +"\n";
     }
 }
