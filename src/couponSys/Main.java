@@ -11,15 +11,14 @@ public class Main{
 
 
     public static void main(String [] args) throws SQLException, InterruptedException {
-        //DBTestcleaner();
-
-        //DailyJobs.CouponExpirationDailyJob dailyJob1 =new DailyJobs.CouponExpirationDailyJob();
-        //Thread dailyJob = new Thread(dailyJob1);
+        DBTestcleaner();
+        DailyJobs.CouponExpirationDailyJob dailyJob1 =new DailyJobs.CouponExpirationDailyJob();
+        Thread dailyJob = new Thread(dailyJob1);
         //dailyJob.start();
         testAll();
         DBTestcleaner();
-        //ConnectionPool connectionPool=ConnectionPool.getInstance();
-        //connectionPool.closeAllConnections();
+        ConnectionPool connectionPool=ConnectionPool.getInstance();
+        connectionPool.closeAllConnections();
     }
 }
 

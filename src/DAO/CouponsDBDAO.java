@@ -23,11 +23,6 @@ public class CouponsDBDAO implements CouponsDAO {
     final String addBoughtCouponStatement = "INSERT INTO CUSTOMERS_VS_COUPONS (COUPON_ID,CUSTOMERS_ID) VALUES (?,?)";
     final String deleteCouponStatement = "DELETE FROM COUPONS WHERE ID = ?";
     final String deletePurchasedCouponStatement = "DELETE FROM CUSTOMERS_VS_COUPONS WHERE COUPON_ID = ?";
-
-    final String selectByPriceForCustomerCouponStatement = "SELECT * FROM COUPONS WHERE END_DATE < ?";
-    final String selectByCategoryForCustomerCouponStatement = "SELECT * FROM COUPONS WHERE END_DATE < ?";
-    final String selectByPriceForCompanyCouponStatement = "SELECT * FROM COUPONS WHERE END_DATE < ?";
-    final String selectByCategoryForCompanyCouponStatement = "SELECT * FROM COUPONS WHERE END_DATE < ?";
     /*
      * Please Notice
      *   -The public methods are handling connection issues if the the connection is working

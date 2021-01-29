@@ -22,7 +22,8 @@ public class ConnectionPool {
 
     public static ConnectionPool getInstance()
     {
-        synchronized(ConnectionPool.class) {
+        if(single_instance == null)
+            synchronized(ConnectionPool.class) {
             if(single_instance == null) {
                 single_instance = new ConnectionPool();
                 initializeConnections();
@@ -58,22 +59,13 @@ public class ConnectionPool {
         }
     }
     public void closeAllConnections() throws SQLException {
-        String logs;
+
         while(!poolSave.isEmpty()) {
-
-            try {
                 for ( Connection con: poolSave) {
-                    logs=con.toString();
                     con.close();
-
                     System.out.println( con +"<<==Deleted successfully==>>");
                 }
                 poolSave.clear();
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-
-            }
         }
     }
 
