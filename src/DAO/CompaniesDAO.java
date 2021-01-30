@@ -1,7 +1,6 @@
 package DAO;
 
 import CustomException.ConnectionException;
-import CustomException.NoClientFound;
 import couponSys.Company;
 
 import java.sql.SQLException;
@@ -24,5 +23,7 @@ public interface CompaniesDAO {
     public ArrayList<Company> getAllCompany() throws ConnectionException, SQLException;
 
     public Company getOneCompany(int companyId) throws ConnectionException, SQLException;
+
+    public Company getCompanyByName(String i_name) throws ConnectionException, SQLException;
 
 }

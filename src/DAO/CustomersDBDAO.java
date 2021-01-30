@@ -21,8 +21,9 @@ public class CustomersDBDAO implements CustomersDAO
      *   -The private "covered" function are doing the sql query build and execution
      * CoveredFunction Editing the Statement and then execute it
      * */
+    final String selectByEmailCustomerStatement = "SELECT * FROM CUSTOMERS WHERE EMAIL = ?";
     final String updateCustomerStatement = "UPDATE CUSTOMERS SET ID = ? , FIRST_NAME = ? , LAST_NAME = ? , EMAIL = ? , PASSWORD = ? WHERE ID = ? ";
-    final String addCustomerStatement = "INSERT INTO CUSTOMERS (ID,FIRST_NAME,LAST_NAME,EMAIL,PASSWORD) VALUES (?,?,?,?,?)";
+    final String addCustomerStatement = "INSERT INTO CUSTOMERS (FIRST_NAME,LAST_NAME,EMAIL,PASSWORD) VALUES (?,?,?,?)";
     final String selectAllCustomerStatement = "SELECT * FROM CUSTOMERS";
     final String selectByIdCustomerStatement = "SELECT * FROM CUSTOMERS WHERE ID = ?";
     final String selectByCredentialsCustomerStatement = "SELECT * FROM CUSTOMERS WHERE (EMAIL = ?) AND (PASSWORD = ?)";
@@ -111,11 +112,10 @@ public class CustomersDBDAO implements CustomersDAO
             connection.setAutoCommit(false);
 
             PreparedStatement insertPreparedStatement = connection.prepareStatement(addCustomerStatement);
-            insertPreparedStatement.setInt(1, customer.getId());
-            insertPreparedStatement.setString(2, customer.getFirstName());
-            insertPreparedStatement.setString(3, customer.getLastName());
-            insertPreparedStatement.setString(4, customer.getEmail());
-            insertPreparedStatement.setString(5, customer.getPassword());
+            insertPreparedStatement.setString(1, customer.getFirstName());
+            insertPreparedStatement.setString(2, customer.getLastName());
+            insertPreparedStatement.setString(3, customer.getEmail());
+            insertPreparedStatement.setString(4, customer.getPassword());
             insertPreparedStatement.executeUpdate();
 
             connection.commit();

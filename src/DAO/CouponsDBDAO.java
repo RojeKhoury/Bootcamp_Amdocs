@@ -3,7 +3,7 @@ package DAO;
 import Connections.ConnectionPool;
 import CustomException.ConnectionException;
 import CustomException.CouponAlreadyExistsException;
-import DAO.CouponsDAO;
+import CustomException.CouponBoughtAlreadyException;
 import couponSys.*;
 import couponSys.Coupon;
 import java.sql.*;
@@ -12,9 +12,9 @@ import java.util.ArrayList;
 public class CouponsDBDAO implements CouponsDAO {
 
     ConnectionPool connectionPool;
-
-    final String updateCouponStatement = "UPDATE COUPONS SET ID = ?  ,TITLE = ? , DESCRIPTION = ? , START_DATE = ? ,END_DATE = ? , AMOUNT = ? ,PRICE = ?,IMAGE = ? , COMPANIES_ID = ? , CATEGORIES_ID = ? WHERE ID = ? ";
-    final String addCouponStatement = "INSERT INTO COUPONS (ID,TITLE,DESCRIPTION,START_DATE,END_DATE,AMOUNT,PRICE,IMAGE,COMPANIES_ID,CATEGORIES_ID) VALUES (?,?,?,?,?,?,?,?,?,?)";
+    final String selectByTitleCompanyStatement="SELECT * FROM COUPONS WHERE TITLE = ?";
+    final String updateCouponStatement = "UPDATE COUPONS SET TITLE = ? , DESCRIPTION = ? , START_DATE = ? ,END_DATE = ? , AMOUNT = ? ,PRICE = ?,IMAGE = ? , CATEGORIES_ID = ? WHERE (ID = ?) AND  (COMPANIES_ID = ?)";
+    final String addCouponStatement = "INSERT INTO COUPONS (TITLE,DESCRIPTION,START_DATE,END_DATE,AMOUNT,PRICE,IMAGE,COMPANIES_ID,CATEGORIES_ID) VALUES (?,?,?,?,?,?,?,?,?)";
     final String selectAllCouponStatement = "SELECT * FROM COUPONS";
     final String selectByIdCouponStatement = "SELECT * FROM COUPONS WHERE ID = ?";
     final String selectByEndBeforeDateCouponStatement = "SELECT * FROM COUPONS WHERE END_DATE < ?";
@@ -54,16 +54,15 @@ public class CouponsDBDAO implements CouponsDAO {
             connection.setAutoCommit(false);
 
             PreparedStatement insertPreparedStatement = connection.prepareStatement(addCouponStatement);
-            insertPreparedStatement.setInt(1, coupon.getId());
-            insertPreparedStatement.setString(2, coupon.getTitle());
-            insertPreparedStatement.setString(3, coupon.getDesciption());
-            insertPreparedStatement.setDate(4, fixDate(coupon.getStartDate()));
-            insertPreparedStatement.setDate(5, fixDate(coupon.getEndDate()));
-            insertPreparedStatement.setInt(6,coupon.getAmount());
-            insertPreparedStatement.setDouble(7, coupon.getPrice());
-            insertPreparedStatement.setString(8, coupon.getImage());
-            insertPreparedStatement.setInt(9, coupon.getCompanyID());
-            insertPreparedStatement.setInt(10, coupon.getCategory().ordinal());
+            insertPreparedStatement.setString(1, coupon.getTitle());
+            insertPreparedStatement.setString(2, coupon.getDesciption());
+            insertPreparedStatement.setDate(3, fixDate(coupon.getStartDate()));
+            insertPreparedStatement.setDate(4, fixDate(coupon.getEndDate()));
+            insertPreparedStatement.setInt(5,coupon.getAmount());
+            insertPreparedStatement.setDouble(6, coupon.getPrice());
+            insertPreparedStatement.setString(7, coupon.getImage());
+            insertPreparedStatement.setInt(8, coupon.getCompanyID());
+            insertPreparedStatement.setInt(9, coupon.getCategory().ordinal());
             insertPreparedStatement.executeUpdate();
             connection.commit();
     }
@@ -78,19 +77,18 @@ public class CouponsDBDAO implements CouponsDAO {
             connection.setAutoCommit(false);
 
             PreparedStatement insertPreparedStatement = connection.prepareStatement(updateCouponStatement);
-            insertPreparedStatement.setInt(1, coupon.getId());
-            insertPreparedStatement.setString(2, coupon.getTitle());
-            insertPreparedStatement.setString(3, coupon.getDesciption());
-            insertPreparedStatement.setDate(4, fixDate(coupon.getStartDate()));
-            insertPreparedStatement.setDate(5, fixDate(coupon.getEndDate()));
-            insertPreparedStatement.setInt(6,coupon.getAmount());
-            insertPreparedStatement.setDouble(7, coupon.getPrice());
-            insertPreparedStatement.setString(8, coupon.getImage());
-            insertPreparedStatement.setInt(9, coupon.getCompanyID());
-            insertPreparedStatement.setInt(10, coupon.getCategory().ordinal());
-            insertPreparedStatement.setInt(11, coupon.getId());
-            insertPreparedStatement.executeUpdate();
 
+            insertPreparedStatement.setString(1, coupon.getTitle());
+            insertPreparedStatement.setString(2, coupon.getDesciption());
+            insertPreparedStatement.setDate(3, fixDate(coupon.getStartDate()));
+            insertPreparedStatement.setDate(4, fixDate(coupon.getEndDate()));
+            insertPreparedStatement.setInt(5,coupon.getAmount());
+            insertPreparedStatement.setDouble(6, coupon.getPrice());
+            insertPreparedStatement.setString(7, coupon.getImage());
+            insertPreparedStatement.setInt(8, coupon.getCategory().ordinal());
+            insertPreparedStatement.setInt(9, coupon.getId());
+            insertPreparedStatement.setInt(10, coupon.getCompanyID());
+            insertPreparedStatement.executeUpdate();
             connection.commit();
     }
 
@@ -142,12 +140,12 @@ public class CouponsDBDAO implements CouponsDAO {
     }
 
     @Override
-    public void addCouponPurchase(int customerID,int couponID) throws ConnectionException, SQLException, CouponAlreadyExistsException {
+    public void addCouponPurchase(int customerID,int couponID) throws ConnectionException, SQLException, CouponBoughtAlreadyException {
         Connection connection = ConnectionPool.getConnection();
 
         if(checkIfCouponAlreadyHadBeenPurchased(customerID, couponID)) {
 
-            throw new CouponAlreadyExistsException(getOneCoupon(couponID).toString());
+            throw new CouponBoughtAlreadyException(getOneCoupon(couponID).toString());
         }
 
             coveredAddCouponPurchase(customerID, couponID,connection);
@@ -288,5 +286,27 @@ public class CouponsDBDAO implements CouponsDAO {
             }
             connection.commit();
             return coupons;
+    }
+
+    @Override
+    public Coupon getCompanyByTitle(String i_title) throws ConnectionException, SQLException{
+        Connection connection = ConnectionPool.getConnection();
+        Coupon coupon= coveredGetCompanyByTitle(i_title, connection);
+        connectionPool.restoreConnection(connection);
+        return coupon;
+
+    }
+    private Coupon coveredGetCompanyByTitle(String i_title,Connection connection) throws SQLException, ConnectionException {
+        connection.setAutoCommit(false);
+
+        Coupon coupon=null;
+        PreparedStatement insertPreparedStatement= connection.prepareStatement(selectByTitleCompanyStatement);
+        insertPreparedStatement.setString(1, i_title);
+        ResultSet resultSet =insertPreparedStatement.executeQuery();
+        while (resultSet.next()){
+            coupon = new Coupon(resultSet.getInt("ID"),resultSet.getInt("COMPANIES_ID"),Category.values()[resultSet.getInt("CATEGORIES_ID")],resultSet.getString("TITLE"),resultSet.getString("DESCRIPTION"),fixDate(resultSet.getDate("START_DATE")),fixDate(resultSet.getDate("END_DATE")),resultSet.getInt("AMOUNT"),resultSet.getDouble("PRICE"),resultSet.getString("IMAGE"));
+        }
+        connection.commit();
+        return coupon;
     }
 }

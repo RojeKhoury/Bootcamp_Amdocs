@@ -74,6 +74,13 @@ public class Customer {
         this.m_password = i_password;
         this.m_coupons = null;
     }
+    public Customer( String i_firstName, String i_lastName, String i_email, String i_password) {
+        this.m_firstName = i_firstName;
+        this.m_lastName = i_lastName;
+        this.m_email = i_email;
+        this.m_password = i_password;
+        this.m_coupons = null;
+    }
 
     @Override
     public String toString() {

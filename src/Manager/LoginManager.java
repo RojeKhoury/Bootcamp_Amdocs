@@ -20,10 +20,6 @@ public class LoginManager
 
 	}
 
-	public static int plus(int a, int b)
-	{
-		return a+b;
-	}
 
 	public static LoginManager getInstance()
 	{

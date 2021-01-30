@@ -1,7 +1,7 @@
 package Facade;
 
 import CustomException.ConnectionException;
-import CustomException.CouponAlreadyExistsException;
+import CustomException.CouponBoughtAlreadyException;
 import DAO.CompaniesDBDAO;
 import DAO.CouponsDBDAO;
 import DAO.CustomersDBDAO;
@@ -41,7 +41,16 @@ public class CustomerFacade extends ClientFacade
 			return false;
 		}
 	}
-	
+	public Coupon getCouponByTitle(String i_title)
+	{
+		//only for tests
+		try {
+			return couponsDAO.getCompanyByTitle(i_title);
+		} catch (ConnectionException | SQLException e) {
+			System.out.println("Couldnt find coupons with this title");
+			return null;
+		}
+	}
 	public void purchaseCoupon(int couponId)  {
 		AtomicBoolean couponExist= new AtomicBoolean(false);
 		AtomicBoolean couponExpiered= new AtomicBoolean(false);
@@ -58,23 +67,25 @@ public class CustomerFacade extends ClientFacade
 
 				if (coupon.getAmount() > 0 && today.before(couponsDAO.getOneCoupon(couponId).getEndDate())) {
 					coupon.setAmount(coupon.getAmount() - 1);
-					System.out.println(coupon.toString());
+					//System.out.println(coupon.toString());
 					couponsDAO.updateCoupon(coupon);
 					couponsDAO.addCouponPurchase(customerID, couponId);
 					System.out.println("You bought " + couponId);
 
 				} else {
-
-					System.out.println("Coupon " + coupon.getId() + " isn't available");
+					if(coupon.getAmount() > 0)
+						System.out.println("Coupon " + coupon.getId() + " expired");
+					else
+						System.out.println("Coupon " + coupon.getId() + " sold out");
 				}
 			}
 			else
 			{
 				System.out.println("Couldnt find the coupon");
 			}
-		} catch (ConnectionException | SQLException e) {
+		} catch (ConnectionException | SQLException  e) {
 			System.out.println(e.getMessage()+"while purchase coupon");
-		}catch (CouponAlreadyExistsException e)
+		}catch(CouponBoughtAlreadyException e)
 		{
 			System.out.println(e.getMessage());
 		}

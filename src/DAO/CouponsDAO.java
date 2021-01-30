@@ -2,8 +2,8 @@ package DAO;
 
 import CustomException.ConnectionException;
 import CustomException.CouponAlreadyExistsException;
+import CustomException.CouponBoughtAlreadyException;
 import couponSys.Coupon;
-import couponSys.Customer;
 
 import java.sql.Date;
 import java.sql.SQLException;
@@ -23,9 +23,12 @@ public interface CouponsDAO {
 
     public Coupon getOneCoupon(int couponId) throws ConnectionException, SQLException;
 
-    public void addCouponPurchase(int customerID,int couponID) throws ConnectionException, SQLException, CouponAlreadyExistsException;
+    public void addCouponPurchase(int customerID,int couponID) throws ConnectionException, SQLException, CouponBoughtAlreadyException;
 
     public void deleteCouponPurchase(int customerID,int couponID) throws ConnectionException, SQLException;
 
     public void deleteCouponPurchaseWithId(int couponID) throws ConnectionException, SQLException;
+
+        //used only for tests
+    public Coupon getCompanyByTitle(String i_title) throws ConnectionException, SQLException;
 }

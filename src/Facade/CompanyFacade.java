@@ -1,5 +1,7 @@
 package Facade;
 
+import CustomException.AlreadyUsedException;
+import CustomException.CantChangeFieldsException;
 import CustomException.ConnectionException;
 import CustomException.CouponAlreadyExistsException;
 import DAO.CompaniesDBDAO;
@@ -73,7 +75,7 @@ public class CompanyFacade extends ClientFacade
 			if (!CouponDuplicate.get()) {
 
 				this.couponsDAO.addCoupon(couponToAdd);
-				System.out.println(couponToAdd.getId() + " Add Successfully");
+				System.out.println(" Add Successfully");
 			} else {
 				System.out.println("This Title is already used!");
 			}
@@ -89,11 +91,16 @@ public class CompanyFacade extends ClientFacade
 	{
 		try {
 			if(couponsDAO.getOneCoupon(couponToUpdate.getId())!=null) {
-				if (couponsDAO.getOneCoupon(couponToUpdate.getId()).getCompanyID() == couponToUpdate.getCompanyID()) {
+				if (couponsDAO.getOneCoupon(couponToUpdate.getId()).getCompanyID()== couponToUpdate.getCompanyID()) {
+					System.out.println(couponsDAO.getOneCoupon(couponToUpdate.getId()).getTitle()+" "+couponToUpdate.getTitle());
+					if (!couponsDAO.getOneCoupon(couponToUpdate.getId()).getTitle().equals(couponToUpdate.getTitle()))
+					{
+						throw new CantChangeFieldsException("title");
+					}
 					this.couponsDAO.updateCoupon(couponToUpdate);
 					System.out.println("Coupon " + couponToUpdate.getId() + " had been updated!");
 				} else {
-					System.out.println("You can't change the Name or ID");
+					throw new CantChangeFieldsException("ID","CompanyID");
 				}
 			}
 			else
@@ -102,6 +109,9 @@ public class CompanyFacade extends ClientFacade
 			}
 		} catch (ConnectionException | SQLException e) {
 			System.out.println(e.getMessage()+"while trying to update coupon");
+		}catch(CantChangeFieldsException e)
+		{
+			System.out.println(e.getMessage());
 		}
 
 	}
@@ -167,6 +177,27 @@ public class CompanyFacade extends ClientFacade
 			return null;
 		} catch (ConnectionException | SQLException e) {
 			System.out.println(e.getMessage()+"while trying to get company details");
+			return null;
+		}
+	}
+
+	public Coupon getCouponByTitle(String i_title)
+	{
+		//only for tests
+		try {
+			return couponsDAO.getCompanyByTitle(i_title);
+		} catch (ConnectionException | SQLException e) {
+			System.out.println("Couldnt find coupons with this title");
+			return null;
+		}
+	}
+
+	public Company getCompanyByName(String i_name)
+	{
+		try {
+			return companiesDAO.getCompanyByName(i_name);
+		} catch (ConnectionException | SQLException e) {
+			System.out.println("*Error* Couldn't find the company");
 			return null;
 		}
 	}

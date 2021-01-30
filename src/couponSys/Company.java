@@ -25,6 +25,11 @@ public class Company {
         this.m_email = i_email;
         this.m_password = i_password;
     }
+    public Company(String i_name, String i_email, String i_password) {
+        this.m_name = i_name;
+        this.m_email = i_email;
+        this.m_password = i_password;
+    }
     public ArrayList<Coupon> getCoupons() {
         return m_coupons;
     }

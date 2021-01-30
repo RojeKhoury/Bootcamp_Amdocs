@@ -1,8 +1,9 @@
 package Facade;
 
+import CustomException.AlreadyUsedException;
 import CustomException.CantDeleteException;
 import CustomException.ConnectionException;
-import CustomException.NoClientFound;
+import CustomException.CouldntUpdateException;
 import DAO.CompaniesDBDAO;
 import DAO.CustomersDBDAO;
 import DAO.CouponsDBDAO;
@@ -45,11 +46,15 @@ public class AdminFacade extends ClientFacade
 	{
 		try {
 			Company company = companiesDAO.getOneCompany(companyToAdd.getId());
-
+			if(companiesDAO.getCompanyByName(companyToAdd.getName())!=null)
+			{
+				throw new AlreadyUsedException("name");
+			}
+			else
 			if (company == null) {
 				if (!companiesDAO.isCompanyExistsValidate(companyToAdd.getEmail())) {//Creating new Company
 					companiesDAO.addCompany(companyToAdd);
-					System.out.println(companyToAdd.getId() + " Add Successfully");
+					System.out.println(" Add Successfully");
 				} else {
 					System.out.println("Email: " + companyToAdd.getEmail() + " exist!");
 				}
@@ -58,6 +63,9 @@ public class AdminFacade extends ClientFacade
 			}
 		}catch (ConnectionException | SQLException e) {
 			System.out.println(e.getMessage()+" while trying to add Company");
+		}catch(AlreadyUsedException e)
+		{
+			System.out.println(e.getMessage());
 		}
 	}
 	
@@ -71,7 +79,7 @@ public class AdminFacade extends ClientFacade
 					this.companiesDAO.updateCompany(companyToUpdate);
 					System.out.println("Company had been updated!");
 				} else {
-					System.out.println("You can't change the Name or ID");
+					throw new CouldntUpdateException("name");
 				}
 			}else
 			{
@@ -79,6 +87,9 @@ public class AdminFacade extends ClientFacade
 			}
 		} catch (ConnectionException | SQLException e) {
 			System.out.println(e.getMessage()+" while trying to update Company");
+		}   catch (CouldntUpdateException d)
+		{
+			System.out.println(d.getMessage());
 		}
 	}
 	
@@ -107,7 +118,7 @@ public class AdminFacade extends ClientFacade
 					);
 			//IF all the coupons deleted so we are ready to delete the company
 			if(!companiesDAO.getOneCompany(companyID).getCoupons().isEmpty())
-				throw new CantDeleteException("Companyies Coupon hasnt been deleted");
+				throw new CantDeleteException("error has accord while deleting coupons");
 			companiesDAO.deleteCompany(companyID);
 			}
 			else{
@@ -155,7 +166,7 @@ public class AdminFacade extends ClientFacade
 				//checking if the email exists
 				if (customersDAO.getCustomerIdByEmail(customerToAdd.getEmail()) == -1) {
 					this.customersDAO.addCustomer(customerToAdd);
-					System.out.println(customerToAdd.getId() + " Add Successfully");
+					System.out.println(" Add Successfully");
 				} else {
 					System.out.println("Customer exist");
 				}
@@ -174,12 +185,8 @@ public class AdminFacade extends ClientFacade
 		try{
 			//check if it does exist by id
 			if(customersDAO.getOneCustomer(customerToAdd.getId())!=null) {
-				if (customersDAO.getOneCustomer(customerToAdd.getId()).getEmail().equals(customerToAdd.getEmail())) {
-					this.customersDAO.updateCustomer(customerToAdd);
-					System.out.println(customerToAdd.getId() + " Updated Successfully");
-				} else {
-					System.out.println("You cant update name or id");
-				}
+				this.customersDAO.updateCustomer(customerToAdd);
+				System.out.println(customerToAdd.getId() + " Updated Successfully");
 			}
 			else
 			{
@@ -209,7 +216,7 @@ public class AdminFacade extends ClientFacade
 						});
 				//check if i deleted all the coupons without errors
 				if (!customersDAO.getOneCustomer(customerID).getCoupons().isEmpty()) {
-					throw new CantDeleteException("Customer cupons hasnt been deleted");
+					throw new CantDeleteException("error has accord while deleting coupons");
 				}
 				//delete the customer if all good
 				this.customersDAO.deleteCustomer(customerID);
@@ -236,6 +243,25 @@ public class AdminFacade extends ClientFacade
 		}
 
 	}
+	//only for tests
+	public Company getCompanyByName (String i_name)
+	{
+		try {
+			return companiesDAO.getCompanyByName(i_name);
+		} catch (ConnectionException | SQLException e) {
+			System.out.println("*Error* Couldn't find the company");
+			return null;
+		}
+	}
+	public int getCustomerIDByCredentials (String i_email,String i_password)
+	{
+		try {
+			return customersDAO.getCustomerIdByCredentials(i_email,i_password);
+		} catch (ConnectionException | SQLException e) {
+			System.out.println("*Error* Couldn't find the company");
+			return -1;
+		}
+	}
 	
 	public Customer getOneCustomer(int customerID)
 	{
@@ -253,4 +279,5 @@ public class AdminFacade extends ClientFacade
 		}
 
 	}
+
 }

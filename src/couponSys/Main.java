@@ -14,9 +14,8 @@ public class Main{
         DBTestcleaner();
         DailyJobs.CouponExpirationDailyJob dailyJob1 =new DailyJobs.CouponExpirationDailyJob();
         Thread dailyJob = new Thread(dailyJob1);
-        //dailyJob.start();
+        dailyJob.start();
         testAll();
-        DBTestcleaner();
         ConnectionPool connectionPool=ConnectionPool.getInstance();
         connectionPool.closeAllConnections();
     }

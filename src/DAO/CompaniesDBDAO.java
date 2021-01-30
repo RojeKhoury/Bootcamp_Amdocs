@@ -15,9 +15,9 @@ import java.util.ArrayList;
 public class CompaniesDBDAO implements CompaniesDAO {
 
     ConnectionPool connectionPool;
-
-    final String updateCompanyStatement = "UPDATE COMPANIES SET ID = ? , NAME = ? , EMAIL = ? , PASSWORD = ? WHERE ID = ? ";
-    final String addCompanyStatement = "INSERT INTO COMPANIES (ID,NAME,EMAIL,PASSWORD) VALUES (?,?,?,?)";
+    final String selectByNameCompanyStatement="SELECT * FROM COMPANIES WHERE NAME = ?";
+    final String updateCompanyStatement = "UPDATE COMPANIES SET EMAIL = ? , PASSWORD = ? WHERE (ID = ?) AND (NAME = ?) ";
+    final String addCompanyStatement = "INSERT INTO COMPANIES (NAME,EMAIL,PASSWORD) VALUES (?,?,?)";
     final String selectAllCompanyStatement = "SELECT * FROM COMPANIES";
     final String selectByIdCompanyStatement = "SELECT * FROM COMPANIES WHERE ID = ?";
     final String selectByCouponsOfCompanyStatement = "SELECT * FROM COUPONS WHERE COMPANIES_ID = ?";
@@ -89,10 +89,9 @@ public class CompaniesDBDAO implements CompaniesDAO {
             connection.setAutoCommit(false);
 
             PreparedStatement insertPreparedStatement = connection.prepareStatement(addCompanyStatement);
-            insertPreparedStatement.setInt(1, company.getId());
-            insertPreparedStatement.setString(2, company.getName());
-            insertPreparedStatement.setString(3, company.getEmail());
-            insertPreparedStatement.setString(4, company.getPassword());
+            insertPreparedStatement.setString(1, company.getName());
+            insertPreparedStatement.setString(2, company.getEmail());
+            insertPreparedStatement.setString(3, company.getPassword());
             insertPreparedStatement.executeUpdate();
             connection.commit();
 
@@ -109,11 +108,11 @@ public class CompaniesDBDAO implements CompaniesDAO {
             connection.setAutoCommit(false);
 
             PreparedStatement insertPreparedStatement = connection.prepareStatement(updateCompanyStatement);
-            insertPreparedStatement.setInt(1, company.getId());
-            insertPreparedStatement.setString(2, company.getName());
-            insertPreparedStatement.setString(3, company.getEmail());
-            insertPreparedStatement.setString(4, company.getPassword());
-            insertPreparedStatement.setInt(5, company.getId());
+
+            insertPreparedStatement.setString(1, company.getEmail());
+            insertPreparedStatement.setString(2, company.getPassword());
+            insertPreparedStatement.setInt(3, company.getId());
+            insertPreparedStatement.setString(4, company.getName());
             insertPreparedStatement.executeUpdate();
 
             connection.commit();
@@ -228,5 +227,30 @@ public class CompaniesDBDAO implements CompaniesDAO {
             }
             connection.commit();
             return company;
+    }
+
+
+
+
+    @Override
+    public Company getCompanyByName(String i_name) throws ConnectionException, SQLException{
+        Connection connection = ConnectionPool.getConnection();
+        Company company= coveredGetCompanyByName(i_name, connection);
+        connectionPool.restoreConnection(connection);
+        return company;
+
+    }
+    private Company coveredGetCompanyByName(String i_name,Connection connection) throws SQLException, ConnectionException {
+        connection.setAutoCommit(false);
+
+        Company company=null;
+        PreparedStatement insertPreparedStatement= connection.prepareStatement(selectByNameCompanyStatement);
+        insertPreparedStatement.setString(1, i_name);
+        ResultSet resultSet =insertPreparedStatement.executeQuery();
+        while (resultSet.next()){
+            company = new Company(resultSet.getInt("ID"),resultSet.getString("NAME"), resultSet.getString("EMAIL"),resultSet.getString("PASSWORD"),getCompanyCoupons(resultSet.getInt("ID")));
+        }
+        connection.commit();
+        return company;
     }
 }

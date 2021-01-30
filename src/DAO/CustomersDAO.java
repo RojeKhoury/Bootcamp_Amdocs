@@ -2,7 +2,6 @@ package DAO;
 
 
 import CustomException.ConnectionException;
-import CustomException.NoClientFound;
 import couponSys.Customer;
 
 import java.sql.SQLException;

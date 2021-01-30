@@ -16,7 +16,7 @@ import java.sql.Date;
 
 public class CouponExpirationDailyJob implements Runnable{
     CouponsDAO coupunsDao;
-    static boolean quit = false;
+    boolean quit = false;
 
     public CouponExpirationDailyJob()  {
         this.coupunsDao = new CouponsDBDAO();
@@ -27,14 +27,9 @@ public class CouponExpirationDailyJob implements Runnable{
     public void run()  {
         while(!this.quit)
         {
-            Thread.currentThread().getId();
             job();
+            stop();
 
-            try {
-                wait(100*60*60*24);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
     }
     public void job()
@@ -55,20 +50,15 @@ public class CouponExpirationDailyJob implements Runnable{
                     System.out.println(e.getMessage()+"During daily coupons deleting job");
                 }
             });
-
-            try {
-                Thread.sleep(1000 * 60 * 60 * 24);
-            } catch (InterruptedException e) {
-            }
-        } catch (ConnectionException | SQLException e) {
+        } catch (ConnectionException| SQLException e) {
             System.out.println(e.getMessage()+"During daily coupons deleting job");
         }
     }
 
-    public static void stop(Thread dailyJob)
+    public void stop()
     {
         System.out.println("Going to stop the job!");
-            dailyJob.interrupt();
+        quit=true;
     }
 
 }
