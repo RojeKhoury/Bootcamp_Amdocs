@@ -1,4 +1,4 @@
-package couponSys;
+package Program;
 import Connections.ConnectionPool;
 import DailyJobs.CouponExpirationDailyJob;
 
@@ -11,7 +11,7 @@ public class Main{
 
 
     public static void main(String [] args) throws SQLException, InterruptedException {
-        DBTestcleaner();
+        //DBTestcleaner();
         DailyJobs.CouponExpirationDailyJob dailyJob1 =new DailyJobs.CouponExpirationDailyJob();
         Thread dailyJob = new Thread(dailyJob1);
         dailyJob.start();

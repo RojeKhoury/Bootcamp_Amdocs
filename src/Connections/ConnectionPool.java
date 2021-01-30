@@ -17,7 +17,7 @@ public class ConnectionPool {
     public static final String password="Roje@1995";//Roje@1995";
     private static final Set<Connection> pool = new LinkedHashSet<Connection>();
     private static final Set<Connection> poolSave = new LinkedHashSet<Connection>();
-    public static final int poolSize=8;
+    public static final int poolSize=10;
     private static ConnectionPool single_instance = null;
 
     public static ConnectionPool getInstance()
